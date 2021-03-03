@@ -23,12 +23,6 @@ import (
 )
 
 func main() {
-
-	//viper, err := config.NewConfigFromFile("./configs", "local", "yaml")
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-
 	viper, err := config.NewConfigFromEnv()
 	if err != nil {
 		log.Fatal(err)

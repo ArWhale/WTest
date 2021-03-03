@@ -9,5 +9,5 @@ init-db:
 
 migrate:
 	@echo "=> Migrate"
-	@go run ./cmd/migrations/migration.go -dir=./sql/migrations postgres ${PG_URL} up
+	@go run ./tools/migrations/migration.go -dir=./sql/migrations postgres ${PG_URL} up
 .PHONY: migrate

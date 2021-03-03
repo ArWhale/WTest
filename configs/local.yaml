@@ -1,6 +1,0 @@
-CUSTOMER_HTTP_HOST: localhost
-CUSTOMER_HTTP_PORT: 8099
-CUSTOMER_DB_URL: postgresql://postgres:postgres@postgres:5432/customers?sslmode=disable&log_statement=all
-CUSTOMER_LOG_OUTPUT: stdout
-CUSTOMER_LOG_LEVEL: debug
-CUSTOMER_LOG_FORMAT: json
