@@ -5,7 +5,6 @@ import (
 	"github.com/SArtemJ/WTest/internal/customer"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"strconv"
 	"time"
 )
 
@@ -50,13 +49,4 @@ func (ch *CustomerHandlers) CreateCustomer(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, newCustomer)
-}
-
-func GetInt64IdFromReqContext(c *gin.Context) (int64, error) {
-	idParam := c.Param("id")
-	id, err := strconv.ParseInt(idParam, 10, 64)
-	if err != nil {
-		//to do
-	}
-	return id, nil
 }
