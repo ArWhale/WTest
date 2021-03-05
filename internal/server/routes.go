@@ -30,7 +30,7 @@ func InitServiceRoutes(router *gin.Engine, ch *CustomerHandlers) {
 	router.GET("/customers/view/:id", ch.GetOneCustomer)
 
 	router.POST("/customers/create", ch.CreateCustomer)
-	router.POST("/customers/search", ch.GetAllCustomers)
+	router.POST("/customers/search", ch.SearchCustomers)
 
 	router.POST("/customers/update", ch.UpdateCustomer)
 	router.DELETE("/customers", ch.DeleteCustomer)

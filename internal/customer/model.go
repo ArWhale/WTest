@@ -32,8 +32,10 @@ func (c *WebCustomer) ToDb() (*DbCustomer, error) {
 }
 
 type SearchCustomer struct {
-	FirstName string `form:"firstName" json:"firstName,omitempty"`
-	LastName  string `form:"lastName" json:"lastName,omitempty"`
+	FirstName *string `form:"firstName" json:"firstName,omitempty"`
+	LastName  *string `form:"lastName" json:"lastName,omitempty"`
+	Limit     *int64  `form:"limit" json:"limit,omitempty"`
+	Offset    *int64  `form:"offset" json:"offset,omitempty"`
 }
 
 type DbCustomer struct {

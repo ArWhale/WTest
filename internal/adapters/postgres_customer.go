@@ -137,7 +137,7 @@ func (cr *CustomerRepository) GetCustomerByID(id int64) (*customer.DbCustomer, e
 	return &c, nil
 }
 
-func (cr *CustomerRepository) SearchCustomers(firstName, lastName string, limit, offset *int64) ([]*customer.DbCustomer, error) {
+func (cr *CustomerRepository) SearchCustomers(firstName, lastName *string, limit, offset *int64) ([]*customer.DbCustomer, error) {
 	var err error
 
 	var sqlstr = `SELECT id, first_name, last_name, birthdate, gender, e_mail, address 

@@ -164,48 +164,14 @@ func (ch *CustomerHandlers) GetOneCustomer(c *gin.Context) {
 }
 
 func (ch *CustomerHandlers) SearchCustomers(c *gin.Context) {
-	l := c.Query("limit")
-	if l == "" {
-		LoggingActionMessage(ch.logger, "wrong limit value")
-		InternalError(c, consts.ActionSearch, nil)
-		return
-	}
-
-	limitValue, err := strconv.ParseInt(l, 0, 64)
-	if err != nil {
-		LoggingActionMessage(ch.logger, "wrong limit value")
-		InternalError(c, consts.ActionSearch, nil)
-		return
-	}
-
-	o := c.Query("offset")
-	if o == "" {
-		LoggingActionMessage(ch.logger, "wrong offset value")
-		InternalError(c, consts.ActionSearch, nil)
-		return
-	}
-
-	offsetValue, err := strconv.ParseInt(o, 0, 64)
-	if err != nil {
-		LoggingActionMessage(ch.logger, "wrong offset value")
-		InternalError(c, consts.ActionSearch, nil)
-		return
-	}
-
 	var in customer.SearchCustomer
-	if err := c.ShouldBind(&in); err == nil {
+	if err := c.ShouldBind(&in); err != nil {
 		LoggingActionMessage(ch.logger, "customer search model wrong value")
 		InternalError(c, consts.ActionSearch, nil)
 		return
 	}
 
-	if in.FirstName == "" || in.LastName == "" {
-		LoggingActionMessage(ch.logger, "customers operation update failed - not enough data")
-		InternalError(c, consts.ActionSearch, nil)
-		return
-	}
-
-	list, err := ch.customerRepo.SearchCustomers(in.FirstName, in.LastName, &limitValue, &offsetValue)
+	list, err := ch.customerRepo.SearchCustomers(in.FirstName, in.LastName, in.Limit, in.Offset)
 	if err != nil {
 		LoggingRepoError(ch.logger, consts.ActionGetByID, err)
 		InternalError(c, consts.ActionGetByID, nil)
