@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"strconv"
 	"strings"
 	"testing"
@@ -165,23 +164,7 @@ router.GET("/customers/create", func(c *gin.Context) {
 
 */
 
-//func TestShowIndexPageUnauthenticated(t *testing.T) {
-//	w := httptest.NewRecorder()
-//
-//	r, h := BuildSuite(t, true)
-//	r.GET("/", h.GetAllCustomers)
-//
-//	req, _ := http.NewRequest("GET", "/", nil)
-//	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-//
-//	r.ServeHTTP(w, req)
-//
-//	if w.Code != http.StatusOK {
-//		t.Fail()
-//	}
-//}
-
-func TestRegisterUnauthenticated(t *testing.T) {
+func TestCreateCustomer(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	r, h := BuildSuite(t, true)
@@ -219,12 +202,4 @@ func createBodyHappy(t *testing.T) string {
 	}
 
 	return string(b)
-}
-
-func getRegistrationPOSTPayload() string {
-	params := url.Values{}
-	params.Add("username", "u1")
-	params.Add("password", "p1")
-
-	return params.Encode()
 }
