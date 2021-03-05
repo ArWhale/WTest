@@ -1,6 +1,7 @@
 package customer
 
 import (
+	"github.com/SArtemJ/WTest/internal/consts"
 	"github.com/go-playground/validator/v10"
 	"strings"
 	"time"
@@ -15,16 +16,20 @@ func GenderValidation() func(fl validator.FieldLevel) bool {
 
 func BirthDateValidation() func(fl validator.FieldLevel) bool {
 	return func(fl validator.FieldLevel) bool {
-		date, ok := fl.Field().Interface().(time.Time)
-		t := time.Now()
-		if ok {
-			if t.Year()-date.Year() > 60 {
-				return false
-			}
-			if t.Year()-date.Year() < 18 {
-				return false
-			}
+		s := fl.Field().String()
+		dTime, err := time.Parse(consts.DefaultDateLayout, s)
+		if err != nil {
+			return false
 		}
+		t := time.Now()
+
+		if t.Year()-dTime.Year() > 60 {
+			return false
+		}
+		if t.Year()-dTime.Year() < 18 {
+			return false
+		}
+
 		return true
 	}
 }

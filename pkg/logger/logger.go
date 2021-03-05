@@ -1,15 +1,16 @@
 package logger
 
 import (
-	"github.com/SArtemJ/WTest/internal/config"
+	"github.com/SArtemJ/WTest/internal/consts"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"os"
 	"strings"
 )
 
-func NewLogger(viper *viper.Viper) *logrus.Entry {
-	logOutput := strings.ToUpper(viper.GetString(config.ServiceLogOutputKey))
+func NewLogger(viper *viper.Viper) logrus.FieldLogger {
+	logOutput := strings.ToUpper(viper.GetString(consts.ServiceLogOutputKey))
+
 	if strings.ToUpper(logOutput) != "STDOUT" {
 		logFile, err := os.OpenFile(logOutput, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 		if err != nil {
@@ -20,7 +21,7 @@ func NewLogger(viper *viper.Viper) *logrus.Entry {
 		logrus.SetOutput(os.Stdout)
 	}
 
-	switch strings.ToLower(config.ServiceLogFormatKey) {
+	switch strings.ToLower(consts.ServiceLogFormatKey) {
 	case "json":
 		logrus.SetFormatter(&logrus.JSONFormatter{
 			PrettyPrint: false,
@@ -31,6 +32,5 @@ func NewLogger(viper *viper.Viper) *logrus.Entry {
 			FullTimestamp: true,
 		})
 	}
-
 	return logrus.NewEntry(logrus.StandardLogger())
 }

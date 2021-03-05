@@ -16,6 +16,11 @@ func NewRepositories(pgURL string) (*Repositories, error) {
 		return nil, fmt.Errorf("Failed to open database connection. Err: %+v", err)
 	}
 
+	err = db.Ping()
+	if err != nil {
+		return nil, fmt.Errorf("Failed ping database, Err: %+v", err)
+	}
+
 	return &Repositories{
 		CustomerRepository: NewCustomerRepository(db),
 		db:                 db,

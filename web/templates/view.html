@@ -1,0 +1,114 @@
+{{ template "header.html" .}}
+<form class="form-horizontal" action='/customers/create' method="POST" enctype="application/json">
+    {{if .payload.ID}}
+    <input type="hidden" name="id" value="{{.payload.ID}}"/>
+    {{end}}
+    <div class="control-group">
+        <label class="control-label">FirstName: </label>
+        <div class="controls">
+            {{ if .payload.FirstName}}
+            <input type="text" required minlength="2" maxlength="100" name="firstName" placeholder=""
+                   class="input-xlarge" value="{{ .payload.FirstName}}" size="100" maxlength="100"/>
+            {{else}}
+            <input type="text" required minlength="2" maxlength="100" name="firstName" placeholder=""
+                   class="input-xlarge" size="100" maxlength="100"/>
+            {{end}}
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">LastName: </label>
+        <div class="controls">
+            {{ if .payload.FirstName}}
+            <input type="text" required minlength="2" maxlength="100" name="lastName" placeholder=""
+                   class="input-xlarge" value="{{ .payload.LastName}}" size="100" maxlength="100"/>
+            {{else}}
+            <input type="text" required minlength="2" maxlength="100" name="lastName" placeholder=""
+                   class="input-xlarge" size="100" maxlength="100"/>
+            {{end}}
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">Birthdate: </label>
+        <div class="controls">
+            {{if .payload.Birthdate}}
+            <input type="date" required name="birthdate" placeholder="" class="input-xlarge"
+                   value="{{ .payload.Birthdate}}" min="1921-01-01" max="2021-03-05"/>
+            {{else}}
+            <input type="date" required name="birthdate" placeholder="" class="input-xlarge"
+                   min="1921-01-01" max="2021-03-05"/>
+            {{end}}
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">E-mail: </label>
+        <div class="controls">
+            {{if .payload.Email}}
+            <input type="email" required name="email" placeholder="" class="input-xlarge"
+                   value="{{ .payload.Email}}" size="50" maxlength="100"/>
+            {{else}}
+            <input type="email" required name="email" placeholder="" class="input-xlarge"
+                   size="50" maxlength="100"/>
+            {{end}}
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">Gender: </label>
+        <div class="controls">
+            {{if .payload.Gender}}
+            <input type="text" required name="gender" placeholder="" class="input-xlarge"
+                   value="{{ .payload.Gender}}" size="10" maxlength="6"/>
+            {{else}}
+            <input type="text" required name="gender" placeholder="" class="input-xlarge"
+                   size="10" maxlength="6"/>
+            {{end}}
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">Address: </label>
+        <div class="controls">
+            {{if .payload.Address}}
+            <input type="text" name="address" placeholder="" class="input-xlarge"
+                   value="{{ .payload.Address}}" size="100" maxlength="200"/>
+            {{else}}
+            <input type="text" name="address" placeholder="" class="input-xlarge"
+                   value="{{ .payload.Address}}" size="100" maxlength="200"/>
+            {{end}}
+        </div>
+    </div>
+    <p></p>
+    {{if (ne .isCreateOnly true)}}
+    <div class="control-group">
+        <div class="controls">
+            <button class="btn btn-success" formaction="/customers/update">Update</button>
+            <button class="btn btn-success" formaction="/customers/delete/:id">Delete</button>
+        </div>
+    </div>
+    {{else}}
+    <div class="control-group">
+        <div class="controls">
+            <button class="btn btn-success">Create</button>
+        </div>
+    </div>
+    {{end}}
+    {{if .validation}}
+    <div class="validation-block">
+        <p>Validation error: {{.validation}}
+    </div>
+    {{end}}
+    {{if .success}}
+    <div class="success-block">
+        <p>Message: {{.success}}
+    </div>
+    {{end}}
+    {{if .isInternal}}
+    <div class="internal-block">
+        <p>Message: {{.message}}
+    </div>
+    {{end}}
+</form>
+{{ template "footer.html" .}}

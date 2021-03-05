@@ -1,0 +1,31 @@
+{{ template "header.html" .}}
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th scope="col" hidden>{{.ID}}</th>
+        <th scope="col">FirstName: <a type="button" href="/"> A </a>||<a type="button" href="/"> D</a></th>
+        <th scope="col">LastName: <a type="button" href="/"> A </a>||<a type="button" href="/"> D</a></th>
+        <th scope="col">Birthdate: <a type="button" href="/"> A </a>||<a type="button" href="/"> D</a></th>
+        <th scope="col">Email: <a type="button" href="/"> A </a>||<a type="button" href="/"> D</a></th>
+        <th scope="col">Gender: <a type="button" href="/"> A </a>||<a type="button" href="/"> D</a></th>
+        <th scope="col">Address:</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{range .payload }}
+    <tr>
+        <th scope="row" hidden>{{.ID}}</th>
+        <th>{{.FirstName}}</th>
+        <th>{{.LastName}}</th>
+        <th>{{.Birthdate}}</th>
+        <th>{{.Email}}</th>
+        <th>{{.Gender}}</th>
+        <th>{{.Address}}</th>
+    </tr>
+    {{end}}
+    <!--    <a href="/customers/view/{{.ID}}">-->
+    <!--        <h6>{{.FirstName}} {{.LastName}} {{.Birthdate}}</h6>-->
+    <!--    </a>-->
+    </tbody>
+</table>
+{{ template "footer.html" .}}

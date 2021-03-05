@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/SArtemJ/WTest/internal/adapters"
 	"github.com/SArtemJ/WTest/internal/config"
+	"github.com/SArtemJ/WTest/internal/consts"
 	"github.com/SArtemJ/WTest/internal/customer"
 	"github.com/SArtemJ/WTest/internal/server"
 	"github.com/SArtemJ/WTest/pkg/logger"
@@ -32,30 +33,28 @@ func main() {
 	RunServer(viper, logger)
 }
 
-func RunServer(viper *viper.Viper, logger *logrus.Entry) {
+func RunServer(viper *viper.Viper, logger logrus.FieldLogger) {
 
-	//add custom validation
+	//custom validation
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterValidation("genderCustom", customer.GenderValidation())
 		v.RegisterValidation("birthdateCustom", customer.BirthDateValidation())
 	}
 
-	r, err := adapters.NewRepositories(viper.GetString(config.ServiceDBUrlKey))
+	r, err := adapters.NewRepositories(viper.GetString(consts.ServiceDBUrlKey))
 	if err != nil {
 		logger.Panic(err)
 	}
 	defer r.Close()
 
-	ch := server.NewCustomerHandlers(r.CustomerRepository)
+	ch := server.NewCustomerHandlers(r.CustomerRepository, logger)
 
 	router := gin.Default()
-	//router.LoadHTMLGlob("./web/templates/*")
-
-	router.GET("/customers", ch.GetAllCustomers)
-	router.POST("/customers/create", ch.CreateCustomer)
+	router.LoadHTMLGlob("./web/templates/*")
+	server.InitServiceRoutes(router, ch)
 
 	srv := &http.Server{
-		Addr:    fmt.Sprintf("%s:%v", viper.GetString(config.ServiceHostKey), viper.GetInt64(config.ServicePortKey)),
+		Addr:    fmt.Sprintf("%s:%v", viper.GetString(consts.ServiceHostKey), viper.GetInt64(consts.ServicePortKey)),
 		Handler: router,
 	}
 

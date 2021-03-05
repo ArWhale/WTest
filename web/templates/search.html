@@ -1,0 +1,35 @@
+{{ template "header.html" .}}
+<form class="form-horizontal" action='/customers/search' method="POST">
+    <fieldset>
+        <div class="control-group">
+            <label class="control-label" for="firstname">FirstName</label>
+            <div class="controls">
+                <input type="text" id="firstname" name="firstname" placeholder="">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="lastname">LastName</label>
+            <div class="controls">
+                <input type="text" id="lastname" name="lastname" placeholder="">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="offset">Offset</label>
+            <div class="controls">
+                <input type="text" id="offset" name="offset" placeholder="">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="limit">Limit</label>
+            <div class="controls">
+                <input type="text" id="limit" name="limit" placeholder="">
+            </div></br>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <button class="btn btn-success">Search</button>
+            </div>
+        </div>
+    </fieldset>
+</form>
+{{ template "footer.html" .}}
