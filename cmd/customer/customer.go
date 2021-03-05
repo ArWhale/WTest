@@ -41,7 +41,7 @@ func RunServer(viper *viper.Viper, logger logrus.FieldLogger) {
 		v.RegisterValidation("birthdateCustom", customer.BirthDateValidation())
 	}
 
-	r, err := adapters.NewRepositories(viper.GetString(consts.ServiceDBUrlKey))
+	r, err := adapters.NewRepositories(viper.GetString(consts.ServiceDBUrlKey), logger)
 	if err != nil {
 		logger.Panic(err)
 	}

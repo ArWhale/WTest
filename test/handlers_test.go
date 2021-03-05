@@ -78,7 +78,7 @@ func (r *RepoForTests) GetCustomerByID(id int64) (*customer.DbCustomer, error) {
 	}, nil
 }
 
-func (r *RepoForTests) SearchCustomers(firstName, lastName string, limit, offset *int64) ([]*customer.DbCustomer, error) {
+func (r *RepoForTests) SearchCustomers(firstName, lastName *string, limit, offset *int64) ([]*customer.DbCustomer, error) {
 	return []*customer.DbCustomer{
 		&customer.DbCustomer{
 			FirstName: fmt.Sprintf("uniqueCustomerName%d", 5),
@@ -132,44 +132,13 @@ func BuildSuite(t *testing.T, withTemplates bool) (*gin.Engine, *server.Customer
 	return r, ch
 }
 
-/*
-	router.GET("/customers/view/:id", ch.GetOneCustomer)
-
-	router.POST("/customers/create", ch.CreateCustomer)
-	router.POST("/customers/search", ch.GetAllCustomers)
-
-	router.PUT("/customers/update", ch.UpdateCustomer)
-	router.DELETE("/customers", ch.DeleteCustomer)
-
-router.GET("/customers/create", func(c *gin.Context) {
-		c.HTML(
-			http.StatusOK,
-			"view.html",
-			gin.H{
-				"createOnly": true,
-				"title":      "Create new customer",
-			},
-		)
-	})
-	router.GET("/customers/search", func(c *gin.Context) {
-		c.HTML(
-			http.StatusOK,
-			"search.html",
-			gin.H{
-				"title": "Search customers",
-			},
-		)
-	})
-	router.GET("/", ch.GetAllCustomers)
-
-*/
-
 func TestCreateCustomer(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	r, h := BuildSuite(t, true)
 	r.POST("/customers/create", h.CreateCustomer)
 
+	//TODO mulriwriter
 	payload := createBodyHappy(t)
 	req, _ := http.NewRequest("POST", "/customers/create", strings.NewReader(payload))
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")

@@ -3,6 +3,7 @@ package adapters
 import (
 	"database/sql"
 	"fmt"
+	"github.com/sirupsen/logrus"
 )
 
 type Repositories struct {
@@ -10,7 +11,7 @@ type Repositories struct {
 	db                 *sql.DB
 }
 
-func NewRepositories(pgURL string) (*Repositories, error) {
+func NewRepositories(pgURL string, logger logrus.FieldLogger) (*Repositories, error) {
 	db, err := sql.Open("postgres", pgURL)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to open database connection. Err: %+v", err)
@@ -22,7 +23,7 @@ func NewRepositories(pgURL string) (*Repositories, error) {
 	}
 
 	return &Repositories{
-		CustomerRepository: NewCustomerRepository(db),
+		CustomerRepository: NewCustomerRepository(db, logger),
 		db:                 db,
 	}, nil
 }

@@ -8,12 +8,14 @@ import (
 )
 
 type CustomerRepository struct {
-	db *sql.DB
+	db     *sql.DB
+	logger logrus.FieldLogger
 }
 
-func NewCustomerRepository(db *sql.DB) *CustomerRepository {
+func NewCustomerRepository(db *sql.DB, logger logrus.FieldLogger) *CustomerRepository {
 	return &CustomerRepository{
-		db: db,
+		db:     db,
+		logger: logger,
 	}
 }
 
@@ -28,24 +30,30 @@ func (cr *CustomerRepository) CreateCustomer(c *customer.DbCustomer) (*customer.
 
 	tx, err := cr.db.Begin()
 	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"err": err,
-		}).Error("Error create customer  - ")
+		cr.logger.WithFields(logrus.Fields{
+			"resource": "db",
+			"err":      err,
+		}).Error("Error CreateCustomer - tx.Begin")
+		return nil, err
 	}
 	defer func() { _ = tx.Rollback() }()
 
 	err = cr.db.QueryRow(sqlstr, c.FirstName, c.LastName, c.Birthdate, c.Gender, c.Email, c.Address).Scan(&c.ID)
 	if err != nil {
+		cr.logger.WithFields(logrus.Fields{
+			"resource": "db",
+			"err":      err,
+		}).Error("Error CreateCustomer - queryRow")
 		return nil, err
 	}
 
 	err = tx.Commit()
 	if err != nil {
-		logrus.WithFields(logrus.Fields{
+		cr.logger.WithFields(logrus.Fields{
 			"resource": "db",
-			"info":     "commit transaction failed",
 			"err":      err,
-		}).Error("Error create customer- ")
+		}).Error("Error CreateCustomer - tx.Commit")
+		return nil, err
 	}
 
 	return c, nil
@@ -60,24 +68,30 @@ func (cr *CustomerRepository) UpdateCustomer(c *customer.DbCustomer) error {
 
 	tx, err := cr.db.Begin()
 	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"err": err,
-		}).Error("Error update customer  - ")
+		cr.logger.WithFields(logrus.Fields{
+			"resource": "db",
+			"err":      err,
+		}).Error("Error UpdateCustomer - tx.Begin")
+		return err
 	}
 	defer func() { _ = tx.Rollback() }()
 
 	_, err = cr.db.Exec(sqlstr, c.FirstName, c.LastName, c.Birthdate, c.Gender, c.Email, c.Address, c.ID)
 	if err != nil {
+		cr.logger.WithFields(logrus.Fields{
+			"resource": "db",
+			"err":      err,
+		}).Error("Error UpdateCustomer - exec")
 		return err
 	}
 
 	err = tx.Commit()
 	if err != nil {
-		logrus.WithFields(logrus.Fields{
+		cr.logger.WithFields(logrus.Fields{
 			"resource": "db",
-			"info":     "commit transaction failed",
 			"err":      err,
-		}).Error("Error update customer- ")
+		}).Error("Error UpdateCustomer - tx.Commit")
+		return err
 	}
 
 	return nil
@@ -94,6 +108,10 @@ func (cr *CustomerRepository) GetAllCustomers(limit, offset *int64) ([]*customer
 
 	q, err := cr.db.Query(sqlstr, limit, offset)
 	if err != nil {
+		cr.logger.WithFields(logrus.Fields{
+			"resource": "db",
+			"err":      err,
+		}).Error("Error query GetAllCustomers - query")
 		return nil, err
 	}
 	defer q.Close()
@@ -103,6 +121,10 @@ func (cr *CustomerRepository) GetAllCustomers(limit, offset *int64) ([]*customer
 		c := customer.DbCustomer{}
 		err = q.Scan(&c.ID, &c.FirstName, &c.LastName, &c.Birthdate, &c.Gender, &c.Email, &c.Address)
 		if err != nil {
+			cr.logger.WithFields(logrus.Fields{
+				"resource": "db",
+				"err":      err,
+			}).Error("Error query GetAllCustomers - scan")
 			return nil, err
 		}
 
@@ -110,6 +132,10 @@ func (cr *CustomerRepository) GetAllCustomers(limit, offset *int64) ([]*customer
 	}
 
 	if err := q.Err(); err != nil {
+		cr.logger.WithFields(logrus.Fields{
+			"resource": "db",
+			"err":      err,
+		}).Error("Error query GetAllCustomers - query row")
 		return nil, err
 	}
 
@@ -127,10 +153,10 @@ func (cr *CustomerRepository) GetCustomerByID(id int64) (*customer.DbCustomer, e
 	c := customer.DbCustomer{}
 	err = cr.db.QueryRow(sqlstr, id).Scan(&c.ID, &c.FirstName, &c.LastName, &c.Birthdate, &c.Gender, &c.Email, &c.Address)
 	if err != nil && err == sql.ErrNoRows {
-		return nil, nil
-	}
-
-	if err != nil {
+		cr.logger.WithFields(logrus.Fields{
+			"resource": "db",
+			"err":      err,
+		}).Error("Error query GetCustomerByID - query row")
 		return nil, err
 	}
 
@@ -149,6 +175,10 @@ func (cr *CustomerRepository) SearchCustomers(firstName, lastName *string, limit
 
 	q, err := cr.db.Query(sqlstr, firstName, lastName, limit, offset)
 	if err != nil {
+		cr.logger.WithFields(logrus.Fields{
+			"resource": "db",
+			"err":      err,
+		}).Error("Error SearchCustomers - query")
 		return nil, err
 	}
 	defer q.Close()
@@ -159,6 +189,10 @@ func (cr *CustomerRepository) SearchCustomers(firstName, lastName *string, limit
 
 		err = q.Scan(&c.ID, &c.FirstName, &c.LastName, &c.Birthdate, &c.Gender, &c.Email, &c.Address)
 		if err != nil {
+			cr.logger.WithFields(logrus.Fields{
+				"resource": "db",
+				"err":      err,
+			}).Error("Error SearchCustomers - scan ")
 			return nil, err
 		}
 
@@ -166,7 +200,10 @@ func (cr *CustomerRepository) SearchCustomers(firstName, lastName *string, limit
 	}
 
 	if err := q.Err(); err != nil {
-		return nil, err
+		cr.logger.WithFields(logrus.Fields{
+			"resource": "db",
+			"err":      err,
+		}).Error("Error SearchCustomers - query row")
 	}
 
 	return res, nil
@@ -183,11 +220,11 @@ func (cr *CustomerRepository) SearchCustomersByEmail(email string) (*customer.Db
 	c := customer.DbCustomer{}
 	err = cr.db.QueryRow(sqlstr, email).Scan(&c.ID, &c.FirstName, &c.LastName, &c.Birthdate, &c.Gender, &c.Email, &c.Address)
 	if err != nil && err == sql.ErrNoRows {
+		cr.logger.WithFields(logrus.Fields{
+			"resource": "db",
+			"err":      err,
+		}).Error("Error SearchCustomersByEmail - query")
 		return nil, nil
-	}
-
-	if err != nil {
-		return nil, err
 	}
 
 	return &c, nil
@@ -199,6 +236,10 @@ func (cr *CustomerRepository) DeleteCustomerByID(id int64) error {
 	const sqlstr = `DELETE FROM public.customers WHERE id = $1`
 	_, err = cr.db.Exec(sqlstr, id)
 	if err != nil {
+		cr.logger.WithFields(logrus.Fields{
+			"resource": "db",
+			"err":      err,
+		}).Error("Error DeleteCustomerByID - exec")
 		return err
 	}
 
