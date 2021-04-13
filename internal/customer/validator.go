@@ -1,7 +1,7 @@
 package customer
 
 import (
-	"github.com/SArtemJ/WTest/internal/consts"
+	"github.com/ArWhale/WTest/internal/consts"
 	"github.com/go-playground/validator/v10"
 	"strings"
 	"time"

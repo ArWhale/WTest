@@ -1,7 +1,7 @@
 package logger
 
 import (
-	"github.com/SArtemJ/WTest/internal/consts"
+	"github.com/ArWhale/WTest/internal/consts"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"os"

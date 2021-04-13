@@ -2,7 +2,7 @@ package adapters
 
 import (
 	"database/sql"
-	"github.com/SArtemJ/WTest/internal/customer"
+	"github.com/ArWhale/WTest/internal/customer"
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 )
@@ -19,7 +19,7 @@ func NewCustomerRepository(db *sql.DB, logger logrus.FieldLogger) *CustomerRepos
 	}
 }
 
-func (cr *CustomerRepository) CreateCustomer(c *customer.DbCustomer) (*customer.DbCustomer, error) {
+func (cr *CustomerRepository) CreateCustomer(c *customer.Customer) (*customer.Customer, error) {
 	var err error
 
 	const sqlstr = `INSERT INTO public.customers (
@@ -59,7 +59,7 @@ func (cr *CustomerRepository) CreateCustomer(c *customer.DbCustomer) (*customer.
 	return c, nil
 }
 
-func (cr *CustomerRepository) UpdateCustomer(c *customer.DbCustomer) error {
+func (cr *CustomerRepository) UpdateCustomer(c *customer.Customer) error {
 	var err error
 
 	const sqlstr = `UPDATE public.customers SET
@@ -97,7 +97,7 @@ func (cr *CustomerRepository) UpdateCustomer(c *customer.DbCustomer) error {
 	return nil
 }
 
-func (cr *CustomerRepository) GetAllCustomers(limit, offset *int64) ([]*customer.DbCustomer, error) {
+func (cr *CustomerRepository) GetAllCustomers(limit, offset *int64) ([]*customer.Customer, error) {
 	var err error
 
 	const sqlstr = `SELECT
@@ -116,9 +116,9 @@ func (cr *CustomerRepository) GetAllCustomers(limit, offset *int64) ([]*customer
 	}
 	defer q.Close()
 
-	var res []*customer.DbCustomer
+	var res []*customer.Customer
 	for q.Next() {
-		c := customer.DbCustomer{}
+		c := customer.Customer{}
 		err = q.Scan(&c.ID, &c.FirstName, &c.LastName, &c.Birthdate, &c.Gender, &c.Email, &c.Address)
 		if err != nil {
 			cr.logger.WithFields(logrus.Fields{
@@ -142,7 +142,7 @@ func (cr *CustomerRepository) GetAllCustomers(limit, offset *int64) ([]*customer
 	return res, nil
 }
 
-func (cr *CustomerRepository) GetCustomerByID(id int64) (*customer.DbCustomer, error) {
+func (cr *CustomerRepository) GetCustomerByID(id int64) (*customer.Customer, error) {
 	var err error
 
 	const sqlstr = `SELECT
@@ -150,7 +150,7 @@ func (cr *CustomerRepository) GetCustomerByID(id int64) (*customer.DbCustomer, e
 		FROM public.customers
 		WHERE id = $1`
 
-	c := customer.DbCustomer{}
+	c := customer.Customer{}
 	err = cr.db.QueryRow(sqlstr, id).Scan(&c.ID, &c.FirstName, &c.LastName, &c.Birthdate, &c.Gender, &c.Email, &c.Address)
 	if err != nil && err == sql.ErrNoRows {
 		cr.logger.WithFields(logrus.Fields{
@@ -163,7 +163,7 @@ func (cr *CustomerRepository) GetCustomerByID(id int64) (*customer.DbCustomer, e
 	return &c, nil
 }
 
-func (cr *CustomerRepository) SearchCustomers(firstName, lastName *string, limit, offset *int64) ([]*customer.DbCustomer, error) {
+func (cr *CustomerRepository) SearchCustomers(firstName, lastName *string, limit, offset *int64) ([]*customer.Customer, error) {
 	var err error
 
 	var sqlstr = `SELECT id, first_name, last_name, birthdate, gender, e_mail, address 
@@ -183,9 +183,9 @@ func (cr *CustomerRepository) SearchCustomers(firstName, lastName *string, limit
 	}
 	defer q.Close()
 
-	var res []*customer.DbCustomer
+	var res []*customer.Customer
 	for q.Next() {
-		c := customer.DbCustomer{}
+		c := customer.Customer{}
 
 		err = q.Scan(&c.ID, &c.FirstName, &c.LastName, &c.Birthdate, &c.Gender, &c.Email, &c.Address)
 		if err != nil {
@@ -209,7 +209,7 @@ func (cr *CustomerRepository) SearchCustomers(firstName, lastName *string, limit
 	return res, nil
 }
 
-func (cr *CustomerRepository) SearchCustomersByEmail(email string) (*customer.DbCustomer, error) {
+func (cr *CustomerRepository) SearchCustomersByEmail(email string) (*customer.Customer, error) {
 	var err error
 
 	const sqlstr = `SELECT
@@ -217,7 +217,7 @@ func (cr *CustomerRepository) SearchCustomersByEmail(email string) (*customer.Db
 		FROM public.customers
 		WHERE e_mail = $1`
 
-	c := customer.DbCustomer{}
+	c := customer.Customer{}
 	err = cr.db.QueryRow(sqlstr, email).Scan(&c.ID, &c.FirstName, &c.LastName, &c.Birthdate, &c.Gender, &c.Email, &c.Address)
 	if err != nil && err == sql.ErrNoRows {
 		cr.logger.WithFields(logrus.Fields{

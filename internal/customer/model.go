@@ -1,7 +1,7 @@
 package customer
 
 import (
-	"github.com/SArtemJ/WTest/internal/consts"
+	"github.com/ArWhale/WTest/internal/consts"
 	"time"
 )
 
@@ -15,12 +15,12 @@ type WebCustomer struct {
 	Birthdate string `form:"birthdate" json:"birthdate" binding:"required,birthdateCustom"`
 }
 
-func (c *WebCustomer) ToDb() (*DbCustomer, error) {
+func (c *WebCustomer) ToDb() (*Customer, error) {
 	dTime, err := time.Parse(consts.DefaultDateLayout, c.Birthdate)
 	if err != nil {
 		return nil, err
 	}
-	return &DbCustomer{
+	return &Customer{
 		ID:        c.ID,
 		FirstName: c.FirstName,
 		LastName:  c.LastName,
@@ -38,7 +38,7 @@ type SearchCustomer struct {
 	Offset    *int64  `form:"offset" json:"offset,omitempty"`
 }
 
-type DbCustomer struct {
+type Customer struct {
 	ID        int64     `json:"id"`
 	FirstName string    `json:"firstName"`
 	LastName  string    `json:"lastName"`
@@ -48,7 +48,7 @@ type DbCustomer struct {
 	Birthdate time.Time `form:"birthdate" json:"birthdate" binding:"required,birthdateCustom"`
 }
 
-func (c *DbCustomer) ToWeb() *WebCustomer {
+func (c *Customer) ToWeb() *WebCustomer {
 	return &WebCustomer{
 		ID:        c.ID,
 		FirstName: c.FirstName,

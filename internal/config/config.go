@@ -2,7 +2,7 @@ package config
 
 import (
 	"errors"
-	"github.com/SArtemJ/WTest/internal/consts"
+	"github.com/ArWhale/WTest/internal/consts"
 	"github.com/spf13/viper"
 	"go.uber.org/multierr"
 	"strings"

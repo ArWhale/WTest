@@ -2,8 +2,8 @@ package server
 
 import (
 	"fmt"
-	"github.com/SArtemJ/WTest/internal/consts"
-	"github.com/SArtemJ/WTest/internal/customer"
+	"github.com/ArWhale/WTest/internal/consts"
+	"github.com/ArWhale/WTest/internal/customer"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"regexp"
